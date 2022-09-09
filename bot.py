@@ -2,16 +2,27 @@ import os
 import datetime
 from twitchio.ext import commands
 from dotenv import load_dotenv
+from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 
 load_dotenv()
 
+
+parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
+parser.add_argument("-t", "--token")
+parser.add_argument("-c", "--clientid")
+parser.add_argument("-n", "--nick")
+parser.add_argument("-p", "--prefix")
+parser.add_argument("-cl", "--channel")
+parser.add_argument("-co", "--counter", default=5)
+args = vars(parser.parse_args())
+
 # set up the bot
 bot = commands.Bot(
-    irc_token=os.getenv('TMI_TOKEN'),
-    client_id=os.getenv('CLIENT_ID'),
-    nick=os.getenv('BOT_NICK'),
-    prefix=os.getenv('BOT_PREFIX'),
-    initial_channels=[os.getenv('CHANNEL')]
+    irc_token=args["token"],
+    client_id=args["clientid"],
+    nick=args["nick"],
+    prefix=args["prefix"],
+    initial_channels=[args["channel"]]
 )
 
 # Initialize play as True to indicate that the bot
@@ -32,7 +43,7 @@ async def event_message(ctx):
     global play, play_count, cooldown_timer_start, play_count_start
 
     # make sure the bot ignores itself and the streamer
-    if ctx.author.name.lower() == os.environ['BOT_NICK'].lower():
+    if ctx.author.name.lower() == args["nick"].lower():
         return
 
     # If a message is "!play"
@@ -43,7 +54,7 @@ async def event_message(ctx):
         play_count += 1
         print("Counter is {}".format(play_count))
         # Counts until there has been 5 times !play in chat
-        if play_count == 5:
+        if play_count == args["counter"]:
             print("\nCounter is {}, time to play!".format(play_count))
             play_count_end = datetime.datetime.now()
             difference = (play_count_end - play_count_start)
