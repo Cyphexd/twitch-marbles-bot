@@ -1,0 +1,1 @@
+python bot.py --token oauth:q700jqd2hydtuggr0ur0crgv6w7uog --clientid un5z8un90tjw79zd9y7cj7ikp7wztg --nick pexwork --prefix ! --channel the_sauce_show
