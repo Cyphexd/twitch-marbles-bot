@@ -3,9 +3,10 @@ import datetime
 from twitchio.ext import commands
 from dotenv import load_dotenv
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
+from random import randint
+import time
 
 load_dotenv()
-
 
 parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
 parser.add_argument("-t", "--token")
@@ -14,6 +15,7 @@ parser.add_argument("-n", "--nick")
 parser.add_argument("-p", "--prefix")
 parser.add_argument("-cl", "--channel")
 parser.add_argument("-co", "--counter", default=5)
+parser.add_argument("-rnd", "--random", default=5)
 args = vars(parser.parse_args())
 
 # set up the bot
@@ -54,7 +56,7 @@ async def event_message(ctx):
         play_count += 1
         print("Counter is {}".format(play_count))
         # Counts until there has been 5 times !play in chat
-        if play_count == args["counter"]:
+        if play_count == int(args["counter"]):
             print("\nCounter is {}, time to play!".format(play_count))
             play_count_end = datetime.datetime.now()
             difference = (play_count_end - play_count_start)
@@ -66,6 +68,7 @@ async def event_message(ctx):
                 play_count = 0
                 cooldown_timer_start = datetime.datetime.now()
                 print("\nSending !play... 150 second cooldown initiated")
+                time.sleep(randint(0, int(args["random"])))
                 await ctx.channel.send("!play")
             else:
                 print("{} times play not in the set timeframe, resetting counter...".format(play_count))
